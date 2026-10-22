@@ -69,14 +69,30 @@
                     <!-- Checkboxes: Skills -->
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">Technical Skills <span class="text-red-500">*</span></label>
+                        
+                        @php
+                            // Ensure $selectedSkills is always an array
+                            $currentSkills = old('skills', $employee->skills ?? []);
+                            if (is_string($currentSkills)) {
+                                $currentSkills = json_decode($currentSkills, true) ?? [];
+                            }
+                        @endphp
+
                         <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-sm">
                             @foreach (\App\Models\Employee::SKILLS as $skill)
                                 <label class="inline-flex items-center">
-                                    <input type="checkbox" name="skills[]" value="{{ $skill }}" {{ in_array($skill,$selectedSkills) ? 'checked' : '' }} class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500">
+                                    <input type="checkbox" 
+                                           name="skills[]" 
+                                           value="{{ $skill }}" 
+                                           {{ in_array($skill, (array) $currentSkills) ? 'checked' : '' }} 
+                                           class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500">
                                     <span class="ml-2 text-gray-700">{{ $skill }}</span>
                                 </label>
                             @endforeach
                         </div>
+                        @error('skills')
+                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                        @enderror
                     </div>
 
                     <!-- Date Pickers -->
@@ -145,7 +161,7 @@
 
                     <div class="flex justify-end space-x-3 pt-4 border-t">
                         <a href="{{ route('employees.index') }}" class="px-4 py-2 border rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50">Cancel</a>
-                        <button type="submit" class="px-4 py-2 bg-indigo-600 text-white rounded-md text-sm font-semibold hover:bg-indigo-700">Update Employee</button>
+                        <button type="submit" class="px-4 py-2 bg-indigo-600 text-white1 rounded-md text-sm font-semibold hover:bg-indigo-700">Update Employee</button>
                     </div>
                 </form>
 
